@@ -45,7 +45,7 @@ export class WindowController {
   constructor(public win: BrowserWindow | null) {
     this.autoLauncher = new AutoLaunch({
       name: 'AnimeciX', 
-      path: `"${app.getPath('exe')}" notify` ,
+      path: app.getPath('exe') ,
       //@ts-ignore
       args:["notify"]
     });

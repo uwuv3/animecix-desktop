@@ -14,7 +14,7 @@ import fetch from "node-fetch";
 import os from "os";
 import { existsSync, mkdirSync } from "fs";
 import { downloadImage } from "./helpers/url-helper";
-
+import { execSync } from "child_process";
 interface animeData {
   poster: string;
   title: string;
@@ -33,7 +33,35 @@ export class Main {
     if (!gotTheLock) {
       app.quit();
     } else {
-      app.whenReady().then(() => {
+      app.whenReady().then(async () => {
+        let startup = false;
+
+        const thresholdSeconds = 70;
+
+        try {
+          const stdout = execSync("systeminfo").toString();
+
+          const uptimeLine = stdout
+            .split("\n")
+            .find((line) => line.trim().startsWith("System Up Time"));
+          if (uptimeLine) {
+            const uptimeString = uptimeLine.split(":")[1].trim();
+            const uptimeParts = uptimeString.split(", ");
+            const days = parseInt(uptimeParts[0].split(" ")[0], 10) || 0;
+            const timeParts = uptimeParts[1].split(":");
+            const hours = parseInt(timeParts[0], 10) || 0;
+            const minutes = parseInt(timeParts[1], 10) || 0;
+            const seconds = parseInt(timeParts[2], 10) || 0;
+
+            const totalUptimeSeconds =
+              days * 24 * 3600 + hours * 3600 + minutes * 60 + seconds;
+
+            if (totalUptimeSeconds <= thresholdSeconds) {
+              startup = true;
+            }
+          }
+        } catch (error) {};
+        if(startup) process.argv.push("notify")
         this.tray = new Tray(path.join(this.dir, "files", "icon.png"));
         this.tray.setToolTip("AnimeciX");
         this.setContext();
@@ -148,7 +176,9 @@ export class Main {
         const d = this.fetchData().then((d) => {
           const requiredAnimes = d.data
             .filter((x: { title_id: number }) =>
-            (veri.notifyIDs ?? []).map(x=>parseInt(`${x}`))?.includes(x.title_id)
+              (veri.notifyIDs ?? [])
+                .map((x) => parseInt(`${x}`))
+                ?.includes(x.title_id)
             )
             .map(
               (x: {
@@ -264,11 +294,16 @@ export class Main {
   }
   async fetchData() {
     try {
-      const response = await fetch("https://animecix.net/secure/last-episodes", {
-        method: 'GET',
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        }});
+      const response = await fetch(
+        "https://animecix.net/secure/last-episodes",
+        {
+          method: "GET",
+          headers: {
+            "User-Agent":
+              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+          },
+        }
+      );
       const data = await response.json();
       return data;
     } catch (error) {
