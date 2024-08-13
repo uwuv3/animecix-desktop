@@ -7,6 +7,12 @@ export class Updater {
   constructor(private win: WindowController) {}
 
   public execute() {
+    autoUpdater.setFeedURL({
+      provider: 'github',
+      owner: 'uwuv3',
+      repo: 'animecix-desktop',
+      token: process.env.ghtoken
+    });
     autoUpdater.checkForUpdates();
 
     autoUpdater.on("update-available", async (info: UpdateInfo) => {

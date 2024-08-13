@@ -1,8 +1,24 @@
 {
   "name": "animecix",
-  "version": "1.2.6",
+  "version": "1.2.8",
   "description": "AnimeciX Desktop App",
   "main": "main.js",
+  "publish": {
+    "provider": "github",
+    "releaseType": "release"
+  },
+  "build": {
+    "icon": "./files/icon.png",
+    "appId": "com.onmu.animecix",
+    "productName": "AnimeciX(custom build)",
+    "win": {
+      "target": "nsis",
+      "icon": "./files/icon.png"
+    },
+    "directories": {
+      "output": "dist"
+    }
+  },
   "scripts": {
     "compile": "tsc",
     "start": "npm run compile && electron .",
@@ -23,16 +39,12 @@
     "url": "https://github.com/CaptainSP"
   },
   "license": "GPL",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/uwuv3/animecix-desktop.git"
-  },
+  "repository": "https://github.com/uwuv3/animecix-desktop.git",
   "dependencies": {
     "@cliqz/adblocker-electron": "^1.27.1",
     "auto-launch": "^5.0.6",
     "axios": "^0.21.1",
     "discord-rpc": "^4.0.1",
-    "electron-db": "^0.15.7",
     "electron-deeplink": "^1.0.10",
     "electron-updater": "^4.3.9",
     "fs": "^0.0.1-security",

@@ -264,7 +264,11 @@ export class Main {
   }
   async fetchData() {
     try {
-      const response = await fetch("https://animecix.net/secure/last-episodes");
+      const response = await fetch("https://animecix.net/secure/last-episodes", {
+        method: 'GET',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        }});
       const data = await response.json();
       return data;
     } catch (error) {

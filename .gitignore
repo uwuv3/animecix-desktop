@@ -7,3 +7,4 @@ package-lock.json
 !files/*
 !files/videos/*
 settings.json
+.env
