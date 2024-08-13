@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ipcMain } from "electron";
+import { app, ipcMain } from "electron";
 import { Sibnet } from "../helpers/sibnet";
 import { WindowController } from "./window-controller";
 import { Database } from "../../models/database";
@@ -7,7 +7,7 @@ import path from "path";
 export class SettingsControlller {
   db: Database;
   constructor(private win: WindowController) {
-    this.db = new Database(path.join(process.cwd(), "settings.json"));
+    this.db = new Database(path.join(app.getPath('userData'), "settings.json"));
   }
   private getData() {
     return this.db.fetchAll();
@@ -28,7 +28,7 @@ export class SettingsControlller {
     ipcMain.on("settingsSet", (event, namve, value) => {
       if (namve == "notifyIDs") {
         if (this.db.has("notifier")) this.db.remove("notifier");
-      }
+      };
       if (!value) return this.db.remove(namve);
       this.db.set(namve, value);
     });
